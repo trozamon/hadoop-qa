@@ -2,7 +2,8 @@
 
 QUEUE="staff"
 
-FOLDER="qa-$(hostname)"
+HNAME=$(echo $(hostname) | sed -e 's/[-\.]/_/g')
+FOLDER="qa_${HNAME}"
 INPUT_UNSTRUCTURED="${FOLDER}/unstructured"
 INPUT_STRUCTURED="${FOLDER}/structured"
 OUTPUT="${FOLDER}/output"
@@ -63,14 +64,14 @@ then
 fi
 
 # Test Hive
-sed -i -e "s/HOSTNAME_THINGY/$(hostname)/" hive/cluster_test.sql
-hive --hiveconf mapreduce.job.queuename=${QUEUE} -f hive/cluster_test.sql ||
+sed -i -e "s/HOSTNAME_THINGY/${HNAME}/" test.sql
+hive --hiveconf mapreduce.job.queuename=${QUEUE} -f test.sql ||
         FAILURES="${FAILURES} hive"
-git reset --hard
+git co -- test.sql
 
 hdfs dfs -rm -r ${FOLDER}
 
-if [ ! -z ${FAILURES} ]
-then
-        echo "Failures ${FAILURES}"
-fi
+for fail in ${FAILURES}
+do
+        echo "${fail} FAILED"
+done
