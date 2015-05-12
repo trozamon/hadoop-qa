@@ -2,15 +2,9 @@
 
 import fileinput
 
-kv = dict()
+sum = 0
 
 for line in fileinput.input():
-    key = line.split('\t')[0]
-    val = int(line.split('\t')[1])
-    if key not in kv.keys():
-        kv[key] = val
-    else:
-        kv[key] = kv[key] + val
+    sum = sum + int(line)
 
-for key in sorted(kv.keys()):
-    print(key + '\t' + str(kv[key]))
+print(str(sum))
