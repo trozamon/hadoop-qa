@@ -21,8 +21,8 @@ hdfs dfs -put pom.xml ${INPUT_UNSTRUCTURED}
 hdfs dfs -put structured.data ${INPUT_STRUCTURED}
 
 # Test YARN JAR submission
-yarn jar hadoop/target/hadoop-examples-hadoop-*.jar \
-        com.alectenharmsel.research.LineCount \
+yarn jar target/hadoop-qa-*.jar \
+        com.alectenharmsel.hadoop.qa.LineCount \
         -Dmapreduce.job.queuename=${QUEUE} \
         ${INPUT_UNSTRUCTURED} \
         ${OUTPUT}/hadoop_java
@@ -49,7 +49,7 @@ python2.7 mrjob_test.py -c mrjob.conf structured.data -r hadoop ||
 
 # Test Pig
 pig -Dmapreduce.job.queuename=${QUEUE} -p "fname=${INPUT_STRUCTURED}" \
-        -f pig/cluster_test.pig
+        -f test.pig
 if [ ! $? -eq 0 ]
 then
         FAILURES="${FAILURES} pig"
@@ -68,6 +68,7 @@ sed -i -e "s/HOSTNAME_THINGY/${HNAME}/" test.sql
 hive --hiveconf mapreduce.job.queuename=${QUEUE} -f test.sql ||
         FAILURES="${FAILURES} hive"
 git co -- test.sql
+hive -e "DROP TABLE qa_${HNAME}"
 
 hdfs dfs -rm -r ${FOLDER}
 
