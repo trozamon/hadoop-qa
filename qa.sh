@@ -72,7 +72,12 @@ hive -e "DROP TABLE qa_${HNAME}"
 
 hdfs dfs -rm -r ${FOLDER}
 
+EXITVAL="0"
+
 for fail in ${FAILURES}
 do
         echo "${fail} FAILED"
+        EXITVAL="1"
 done
+
+exit ${EXITVAL}
