@@ -67,7 +67,7 @@ fi
 sed -i -e "s/HOSTNAME_THINGY/${HNAME}/" test.sql
 hive --hiveconf mapreduce.job.queuename=${QUEUE} -f test.sql ||
         FAILURES="${FAILURES} hive"
-git co -- test.sql
+git checkout -- test.sql
 hive -e "DROP TABLE qa_${HNAME}"
 
 hdfs dfs -rm -r ${FOLDER}
